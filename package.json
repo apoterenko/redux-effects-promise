@@ -1,0 +1,19 @@
+{
+  "name": "redux-effects-promise",
+  "version": "0.0.1",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/apoterenko/redux-effects-promise.git"
+  },
+  "bugs": {
+    "url": "https://github.com/apoterenko/redux-effects-promise/issues"
+  },
+  "module": "index.js",
+  "typings": "index.d.ts",
+  "main": "index.js",
+  "engines": {
+    "node": ">= 4.2.1",
+    "npm": ">= 3"
+  }
+}

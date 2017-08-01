@@ -2,6 +2,18 @@
   "name": "redux-effects-promise",
   "version": "0.0.1",
   "license": "MIT",
+  "scripts": {
+    "clean": "npm cache clean",
+    "tsc-build": "node \"node_modules/typescript/bin/tsc\"",
+    "deploy": "npm install && npm run tsc-build && npm publish ./"
+  },
+  "keywords": [
+    "redux",
+    "effects",
+    "promise",
+    "effects-promise",
+    "typescript"
+  ],
   "repository": {
     "type": "git",
     "url": "https://github.com/apoterenko/redux-effects-promise.git"
@@ -18,9 +30,11 @@
   },
   "peerDependencies": {
     "inversify": "~4.3.0",
-    "redux": "~3.7.2"
+    "redux": "~3.7.2",
+    "core-js": "^2.4.1"
   },
   "devDependencies": {
-    "typescript": "~2.4.2"
+    "typescript": "~2.4.2",
+    "core-js": "^2.4.1"
   }
 }

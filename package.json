@@ -15,5 +15,12 @@
   "engines": {
     "node": ">= 4.2.1",
     "npm": ">= 3"
+  },
+  "peerDependencies": {
+    "inversify": "~4.3.0",
+    "redux": "~3.7.2"
+  },
+  "devDependencies": {
+    "typescript": "~2.4.2"
   }
 }

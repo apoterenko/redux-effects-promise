@@ -21,9 +21,9 @@
   "bugs": {
     "url": "https://github.com/apoterenko/redux-effects-promise/issues"
   },
-  "module": "index.js",
-  "typings": "index.d.ts",
-  "main": "index.js",
+  "module": "redux-effects-promise.js",
+  "typings": "redux-effects-promise.d.ts",
+  "main": "redux-effects-promise.js",
   "engines": {
     "node": ">= 4.2.1",
     "npm": ">= 3"
@@ -34,6 +34,8 @@
     "core-js": "^2.4.1"
   },
   "devDependencies": {
+    "@types/core-js": "~0.9.42",
+    "@types/node": "~8.0.19",
     "typescript": "~2.4.2",
     "core-js": "^2.4.1"
   }

@@ -21,17 +21,18 @@ export const effectsMiddleware = ({dispatch}) => (
 									!!(result as Array<any>).find(item => (!(item instanceof EffectsAction)));
 
 								if (!thisIsNotArrayOfActionEffects) {
-									[].concat(result).forEach(action => dispatch({
-										type: action.type,
-										data: action.data,
+									[].concat(result).forEach(resultAction => dispatch({
+										type: resultAction.type,
+										data: resultAction.data,
 										initialData: initialData
 									}));
 									return;
 								}
 							} else if (result instanceof EffectsAction) {
+								const resultAction = result;
 								dispatch({
-									type: action.type,
-									data: action.data,
+									type: resultAction.type,
+									data: resultAction.data,
 									initialData: initialData
 								});
 								return;

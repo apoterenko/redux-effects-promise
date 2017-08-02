@@ -7,11 +7,14 @@ export class EffectsService {
 	private static store: Store<any>;
 	private static effectsMap = new Map<string, Function>();
 
-	static effects(value: string): Function {
+	static effects(actionType: string): Function {
 		const this0 = this;
 		return (target: any, propertyKey: string): void => {
+			if (this.fromEffectsMap(actionType)) {
+				throw new Error(`There is already exist an effect for the action type ${actionType}`);
+			}
 			this.effectsMap.set(
-				value,
+				actionType,
 				function (): any {
 					const proxyObject = this0.container.get(target.constructor);
 					const effectsFn: Function = Reflect.get(proxyObject, propertyKey);

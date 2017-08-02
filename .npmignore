@@ -3,6 +3,7 @@
 .npmignore
 
 node_modules
+preview
 
 src/*.js
-src/*.js.map
+src/*.ts

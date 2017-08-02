@@ -16,6 +16,7 @@
     "promise-effects",
     "effects-promise",
     "redux-promise-effects",
+    "redux-promise",
     "typescript"
   ],
   "repository": {

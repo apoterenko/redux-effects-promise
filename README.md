@@ -16,19 +16,13 @@ npm install redux-effects-promise --save
 ## Usage
 
 ```typescript
-...
 import 'reflect-metadata';
-import { Container } from 'inversify';
-import getDecorators from 'inversify-inject-decorators';
-import { makeProvideDecorator } from 'inversify-binding-decorators';
 import { createStore } from 'redux';
+import { Container } from 'inversify';
 import { EffectsService, effectsMiddleware } from 'redux-effects-promise';
-...
+
 export const middlewares = [..., effectsMiddleware];
-export const store: Store<IAppState> = createStore(...);
-export const appContainer = new Container();
-...
-EffectsService.configure(appContainer, store);
+EffectsService.configure(new Container(), createStore(...));
 ```
 
 ```typescript

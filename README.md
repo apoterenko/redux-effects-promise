@@ -16,13 +16,25 @@ npm install redux-effects-promise --save
 ## Usage
 
 ```typescript
+...
+import 'reflect-metadata';
+import { Container } from 'inversify';
+import getDecorators from 'inversify-inject-decorators';
+import { makeProvideDecorator } from 'inversify-binding-decorators';
+import { createStore } from 'redux';
+import { EffectsService, effectsMiddleware } from 'redux-effects-promise';
+...
+export const middlewares = [..., effectsMiddleware];
+export const store: Store<IAppState> = createStore(...);
+export const appContainer = new Container();
+...
+EffectsService.configure(appContainer, store);
+```
+
+```typescript
 import { AnyAction } from 'redux';
 import { EffectsAction, EffectsService } from 'redux-effects-promise';
-
-import { IAppState } from '../../redux/store.interface';
-import { provide } from '../../di/di.service';
-import { BaseEffects } from '../../redux/base.effects';
-
+...
 @provide(DashboardFormEffects)
 export class DashboardFormEffects extends BaseEffects {
 
@@ -52,11 +64,46 @@ export class DashboardFormEffects extends BaseEffects {
 	}
 
 	@EffectsService.effects('dashboard.next3')
-	next3(action: AnyAction): number {
-		return 100;
+	next3(action: AnyAction): EffectsAction[] {
+		return [
+			EffectsAction.create('router.navigate', '/dashboard'),
+			EffectsAction.create('dashboard.next4')
+		];
+	}
+
+	@EffectsService.effects('dashboard.next4')
+	next4(): Promise<EffectsAction[]>{
+		return Promise.resolve(
+			[
+				EffectsAction.create('dashboard.next5'),
+				EffectsAction.create('dashboard.next6')
+			]
+		);
+	}
+
+	@EffectsService.effects('dashboard.next5')
+	next5(): void {
+		console.log('Nothing to do within next5');
+	}
+
+	@EffectsService.effects('dashboard.next6')
+	next6(): void {
+		console.log('Nothing to do within next6');
 	}
 }
 ```
+
+```typescript
+...
+@provide(BaseEffects)
+export class BaseEffects {
+	@lazyInject(DI_TYPES.Api) protected api: IApi;
+}
+```
+
+## Preview
+
+![00](preview/00.png)
 
 ## License
 

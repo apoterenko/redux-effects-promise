@@ -2,6 +2,8 @@
   "name": "redux-effects-promise",
   "version": "0.0.2",
   "license": "MIT",
+  "author": "Alex Poter <a.poterenko@gmail.com>",
+  "description": "An implementation of promises effects for redux",
   "scripts": {
     "clean": "npm cache clean",
     "tsc-build": "node \"node_modules/typescript/bin/tsc\"",
@@ -11,7 +13,9 @@
     "redux",
     "effects",
     "promise",
+    "promise-effects",
     "effects-promise",
+    "redux-promise-effects",
     "typescript"
   ],
   "repository": {

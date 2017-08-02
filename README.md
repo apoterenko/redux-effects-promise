@@ -1,6 +1,6 @@
 # redux-effects-promise
 
-Declarative promise's effects for redux.
+An implementation of promises effects for redux.
 
 ## Installation
 

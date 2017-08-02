@@ -1,6 +1,6 @@
 {
   "name": "redux-effects-promise",
-  "version": "0.0.3",
+  "version": "0.0.4",
   "license": "MIT",
   "author": "Alex Poter <a.poterenko@gmail.com>",
   "description": "An implementation of promises effects for redux",

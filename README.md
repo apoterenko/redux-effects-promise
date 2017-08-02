@@ -1,6 +1,6 @@
 # redux-effects-promise
 
-An implementation of promises effects for redux.
+An implementation of declarative promises effects for redux. The solution is based on **inversify** library.
 
 ## Installation
 

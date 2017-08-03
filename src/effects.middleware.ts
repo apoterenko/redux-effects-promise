@@ -3,8 +3,10 @@ import { AnyAction } from 'redux';
 import { EffectsService } from './effects.service';
 import { EffectsAction } from './effects.action';
 
-const toActions = (action: AnyAction, result: any, initialData: any): AnyAction[] => {
+const toActions = (action: AnyAction, result: any): AnyAction[] => {
+	const initialData = action.data;
 	let actionsForDispatch: AnyAction[];
+
 	if (Array.isArray(result)) {
 		const thisIsNotArrayOfActionEffects =
 			!!(result as Array<any>).find(item => (!(item instanceof EffectsAction)));
@@ -45,12 +47,15 @@ export const effectsMiddleware = ({dispatch}) => (
 					type: action.type,
 					data: action.data,
 					promise: proxyFnResult.then(
-						result => toActions(action, result, initialData).forEach((action) => dispatch(action))
+						result => toActions(action, result).forEach((action) => dispatch(
+							{ type: action.type, data: action.data, initialData: initialData }
+						))
 					)
 				});
 			} else if (proxyFnResult) {
 				const nextActionResult = next(action);
-				[].concat(proxyFnResult).forEach(action => dispatch({ type: action.type, data: action.data }));
+				toActions(action, proxyFnResult)
+					.forEach(action => dispatch({ type: action.type, data: action.data }));
 				return nextActionResult;
 			}
 		}

@@ -26,11 +26,34 @@ EffectsService.configure(new Container(), createStore(...));
 ```
 
 ```typescript
+import { EffectsService } from 'redux-effects-promise';
+...
+@provide(DashboardListEffects)
+export class DashboardListEffects {
+
+	@lazyInject(DI_TYPES.Api) protected api: IApi;
+
+	@EffectsService.effects('dashboard.list.load')
+	loadProducts(): Promise<IProduct[]> {
+		return this.api.loadProducts();
+	}
+
+	// Or ...
+    // @EffectsService.effects('dashboard.list.load')
+    // loadProducts(): IProduct[] {
+    //    return [{ name: 'Product1', id: 1901 }, { name: 'Product2', id: 1902 }];
+    // }
+}
+```
+
+```typescript
 import { AnyAction } from 'redux';
 import { EffectsAction, EffectsService } from 'redux-effects-promise';
 ...
 @provide(DashboardFormEffects)
-export class DashboardFormEffects extends BaseEffects {
+export class DashboardFormEffects {
+
+	@lazyInject(DI_TYPES.Api) protected api: IApi;
 
 	@EffectsService.effects('dashboard.form.submit')
 	saveProduct(action: AnyAction, state: IAppState): Promise<EffectsAction[]> {
@@ -40,58 +63,18 @@ export class DashboardFormEffects extends BaseEffects {
 					EffectsAction.create('dashboard.form.submit.done', result),
 					EffectsAction.create('dashboard.list.update', action.data),
 					EffectsAction.create('dashboard.list.deselect'),
-					EffectsAction.create('dashboard.next1')
+					EffectsAction.create('router.navigate', '/dashboard')
 				];
 			});
 	}
 
-	@EffectsService.effects('dashboard.next1')
-	next1(action: AnyAction): Promise<EffectsAction> {
-		return Promise.resolve(
-			EffectsAction.create('dashboard.next2')
-		);
-	}
-
-	@EffectsService.effects('dashboard.next2')
-	next2(action: AnyAction): EffectsAction {
-		return EffectsAction.create('dashboard.next3');
-	}
-
-	@EffectsService.effects('dashboard.next3')
-	next3(action: AnyAction): EffectsAction[] {
+	@EffectsService.effects('dashboard.back')
+	back(action: AnyAction, state: IAppState): EffectsAction[] {
 		return [
 			EffectsAction.create('router.navigate', '/dashboard'),
-			EffectsAction.create('dashboard.next4')
+			EffectsAction.create('dashboard.list.deselect')
 		];
 	}
-
-	@EffectsService.effects('dashboard.next4')
-	next4(): Promise<EffectsAction[]>{
-		return Promise.resolve(
-			[
-				EffectsAction.create('dashboard.next5'),
-				EffectsAction.create('dashboard.next6')
-			]
-		);
-	}
-
-	@EffectsService.effects('dashboard.next5')
-	next5(): void {
-		console.log('Nothing to do within next5');
-	}
-
-	@EffectsService.effects('dashboard.next6')
-	next6(): void {
-		console.log('Nothing to do within next6');
-	}
-}
-```
-
-```typescript
-...
-@provide(BaseEffects)
-export class BaseEffects {
-	@lazyInject(DI_TYPES.Api) protected api: IApi;
 }
 ```
 

@@ -11,7 +11,8 @@ npm install redux-effects-promise --save
 ## Dependencies
 
 * [inversify](https://www.npmjs.com/package/inversify)
-* [redux](https://github.com/reactjs/redux)
+* [redux](https://www.npmjs.com/package/redux)
+* [core-js](https://www.npmjs.com/package/core-js)
 
 ## Usage
 

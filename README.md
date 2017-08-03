@@ -38,7 +38,7 @@ export class DashboardListEffects {
 		return this.api.loadProducts();
 	}
 
-	// Or ...
+    // Or ...
     // @EffectsService.effects('dashboard.list.load')
     // loadProducts(): IProduct[] {
     //    return [{ name: 'Product1', id: 1901 }, { name: 'Product2', id: 1902 }];

@@ -41,8 +41,9 @@ export const effectsMiddleware = ({dispatch}) => (
 		const proxyFn = EffectsService.fromEffectsMap(action.type);
 		if (proxyFn) {
 			const proxyFnResult = proxyFn(action);
+			const initialData = action.data;
+
 			if (proxyFnResult instanceof Promise) {
-				const initialData = action.data;
 				return next({
 					type: action.type,
 					data: action.data,
@@ -54,8 +55,9 @@ export const effectsMiddleware = ({dispatch}) => (
 				});
 			} else if (proxyFnResult) {
 				const nextActionResult = next(action);
-				toActions(action, proxyFnResult)
-					.forEach(action => dispatch({ type: action.type, data: action.data }));
+				toActions(action, proxyFnResult).forEach((action) => dispatch(
+					{ type: action.type, data: action.data, initialData: initialData }
+				));
 				return nextActionResult;
 			}
 		}

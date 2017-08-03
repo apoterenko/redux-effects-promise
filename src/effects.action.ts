@@ -7,7 +7,7 @@ export interface IEffectsAction extends Action {
 
 export class EffectsAction implements EffectsAction {
 
-	public initialData?: any;
+	initialData?: any;
 
 	constructor(public type: string,
 				public data?: any) {

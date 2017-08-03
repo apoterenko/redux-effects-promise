@@ -31,9 +31,7 @@ import { EffectsService } from 'redux-effects-promise';
 ...
 @provide(DashboardListEffects)
 export class DashboardListEffects {
-
-	@lazyInject(DI_TYPES.Api) protected api: IApi;
-
+	...
 	@EffectsService.effects('dashboard.list.load')
 	loadProducts(): Promise<IProduct[]> {
 		return this.api.loadProducts();
@@ -53,9 +51,7 @@ import { EffectsAction, EffectsService } from 'redux-effects-promise';
 ...
 @provide(DashboardFormEffects)
 export class DashboardFormEffects {
-
-	@lazyInject(DI_TYPES.Api) protected api: IApi;
-
+    ...
 	@EffectsService.effects('dashboard.form.submit')
 	saveProduct(action: AnyAction, state: IAppState): Promise<EffectsAction[]> {
 		return this.api.saveProduct(action.data)
@@ -63,17 +59,18 @@ export class DashboardFormEffects {
 				return [
 					EffectsAction.create('dashboard.form.submit.done', result),
 					EffectsAction.create('dashboard.list.update', action.data),
-					EffectsAction.create('dashboard.list.deselect'),
-					EffectsAction.create('router.navigate', '/dashboard')
+					EffectsAction.create('dashboard.back', action.data)  // Parameter1=action.data
 				];
 			});
 	}
 
 	@EffectsService.effects('dashboard.back')
-	back(action: AnyAction, state: IAppState): EffectsAction[] {
+	back(): EffectsAction[] {
+		// A inheriting of the parameters works finely so input parameter
+		// "Parameter1" would pass within an action = { type: ..., data: ..., initialData: Parameter1 }
 		return [
-			EffectsAction.create('router.navigate', '/dashboard'),
-			EffectsAction.create('dashboard.list.deselect')
+			EffectsAction.create('dashboard.list.deselect'),
+			EffectsAction.create('router.navigate', '/dashboard')
 		];
 	}
 }

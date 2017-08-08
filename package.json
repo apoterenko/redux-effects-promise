@@ -1,6 +1,6 @@
 {
   "name": "redux-effects-promise",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "author": "Alex Poter <a.poterenko@gmail.com>",
   "description": "An implementation of declarative promises effects for redux.",

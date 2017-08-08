@@ -50,7 +50,12 @@ export const effectsMiddleware = ({dispatch}) => (
 					promise: proxyFnResult.then(
 						result => toActions(action, result).forEach((action) => dispatch(
 							{ type: action.type, data: action.data, initialData: initialData }
-						))
+						)),
+						error => ({
+							type: `${action.type}.error`,
+							error: error,
+							initialData: initialData
+						})
 					)
 				});
 			} else if (proxyFnResult) {

@@ -5,12 +5,15 @@ export class EffectsAction implements IEffectsAction {
 	initialData?: any;
 	data?: any;
 	error?: any;
+	type: string;
 
-	constructor(public type: string) {
+	constructor(type: string, data?: any) {
+		this.type = type;
+		this.data = data;
 	}
 
-	static create(type: string): EffectsAction {
-		return new EffectsAction(type);
+	static create(type: string, data?: any): EffectsAction {
+		return new EffectsAction(type, data);
 	}
 
 	setData(data: any): EffectsAction {

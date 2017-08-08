@@ -51,11 +51,7 @@ export const effectsMiddleware = ({dispatch}) => (
 						result => toActions(action, result).forEach((action) => dispatch(
 							{ type: action.type, data: action.data, initialData: initialData }
 						)),
-						error => ({
-							type: `${action.type}.error`,
-							error: error,
-							initialData: initialData
-						})
+						error => dispatch({ type: `${action.type}.error`, error: error, initialData: initialData })
 					)
 				});
 			} else if (proxyFnResult) {

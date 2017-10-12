@@ -6,8 +6,10 @@
   "description": "An implementation of declarative promises effects for redux.",
   "scripts": {
     "clean": "npm cache clean",
-    "tsc-build": "node \"node_modules/typescript/bin/tsc\"",
-    "deploy": "npm install && npm run tsc-build && npm publish ./"
+    "build": "npm run tsc-build",
+    "tsc-build": "node_modules/.bin/tsc --p tsconfig.json",
+    "lint": "node_modules/.bin/tslint --config tslint.json src/**/*.ts*",
+    "deploy": "npm install && npm run build && npm publish ./"
   },
   "keywords": [
     "redux",
@@ -39,11 +41,13 @@
     "core-js": "^2.4.1"
   },
   "devDependencies": {
-    "inversify": "~4.3.0",
-    "redux": "~3.7.2",
-    "core-js": "^2.4.1",
     "@types/core-js": "~0.9.42",
     "@types/node": "~8.0.19",
+    "core-js": "^2.4.1",
+    "eslint": "^4.8.0",
+    "inversify": "~4.3.0",
+    "redux": "~3.7.2",
+    "tslint": "^5.7.0",
     "typescript": "~2.4.2"
   }
 }

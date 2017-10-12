@@ -10,33 +10,33 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
   if (Array.isArray(result)) {
     if (result.length) {
       const thisIsArrayOfActionEffects =
-          !!(result as Array<any>).find(item => item instanceof EffectsAction);
+          !!(result as any[]).find((item) => item instanceof EffectsAction);
 
       if (thisIsArrayOfActionEffects) {
-        actionsForDispatch = result.map(resultAction => ({
+        actionsForDispatch = result.map((resultAction) => ({
           ...resultAction,
-          initialData: initialData
+          initialData,
         }));
       }
     }
   } else if (result instanceof EffectsAction) {
     actionsForDispatch = [{
       ...result,
-      initialData: initialData
+      initialData,
     }];
   }
   actionsForDispatch = actionsForDispatch || [
     {
       type: `${action.type}.done`,
       data: result,
-      initialData: initialData
+      initialData,
     }
   ];
   return actionsForDispatch;
 };
 
 export const effectsMiddleware = ({dispatch}) => (
-    (next: Function) => (action: AnyAction) => {
+    (next: (...args) => {}) => (action: AnyAction) => {
       const proxyFn = EffectsService.fromEffectsMap(action.type);
       if (proxyFn) {
         const proxyFnResult = proxyFn(action);
@@ -47,16 +47,16 @@ export const effectsMiddleware = ({dispatch}) => (
             type: action.type,
             data: action.data,
             promise: proxyFnResult.then(
-                result => toActions(action, result).forEach((action) => dispatch(
-                    {type: action.type, data: action.data, initialData: initialData}
+                (result) => toActions(action, result).forEach((action0) => dispatch(
+                    {...action0.type, initialData}
                 )),
-                error => dispatch({type: `${action.type}.error`, error: error, initialData: initialData})
-            )
+                (error) => dispatch({type: `${action.type}.error`, error, initialData})
+            ),
           });
         } else if (proxyFnResult) {
           const nextActionResult = next(action);
-          toActions(action, proxyFnResult).forEach((action) => dispatch(
-              {type: action.type, data: action.data, initialData: initialData}
+          toActions(action, proxyFnResult).forEach((action0) => dispatch(
+              {...action0, initialData}
           ));
           return nextActionResult;
         }

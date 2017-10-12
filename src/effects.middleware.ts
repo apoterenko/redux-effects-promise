@@ -36,7 +36,7 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
 };
 
 export const effectsMiddleware = ({dispatch}) => (
-    (next: (...args) => {}) => (action: AnyAction) => {
+    (next: <A extends AnyAction>(action: A) => A) => <A extends AnyAction>(action: A) => {
       const proxyFn = EffectsService.fromEffectsMap(action.type);
       if (proxyFn) {
         const proxyFnResult = proxyFn(action);
@@ -44,15 +44,14 @@ export const effectsMiddleware = ({dispatch}) => (
 
         if (proxyFnResult instanceof Promise) {
           return next({
-            type: action.type,
-            data: action.data,
+            ...action || {},
             promise: proxyFnResult.then(
                 (result) => toActions(action, result).forEach((action0) => dispatch(
                     {...action0.type, initialData}
                 )),
                 (error) => dispatch({type: `${action.type}.error`, error, initialData})
             ),
-          });
+          } as any);
         } else if (proxyFnResult) {
           const nextActionResult = next(action);
           toActions(action, proxyFnResult).forEach((action0) => dispatch(

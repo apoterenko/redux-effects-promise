@@ -47,7 +47,7 @@ export const effectsMiddleware = ({dispatch}) => (
             ...action || {},
             promise: proxyFnResult.then(
                 (result) => toActions(action, result).forEach((action0) => dispatch(
-                    {...action0.type, initialData}
+                    {...action0, initialData}
                 )),
                 (error) => dispatch({type: `${action.type}.error`, error, initialData})
             ),

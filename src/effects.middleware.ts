@@ -8,21 +8,20 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
   let actionsForDispatch: AnyAction[];
 
   if (Array.isArray(result)) {
-    const thisIsNotArrayOfActionEffects =
-        !!(result as Array<any>).find(item => (!(item instanceof EffectsAction)));
+    if (result.length) {
+      const thisIsArrayOfActionEffects =
+          !!(result as Array<any>).find(item => item instanceof EffectsAction);
 
-    if (!thisIsNotArrayOfActionEffects) {
-      actionsForDispatch = result.map(resultAction => ({
-        type: resultAction.type,
-        data: resultAction.data,
-        initialData: initialData
-      }));
+      if (thisIsArrayOfActionEffects) {
+        actionsForDispatch = result.map(resultAction => ({
+          ...resultAction,
+          initialData: initialData
+        }));
+      }
     }
   } else if (result instanceof EffectsAction) {
-    const resultAction = result;
     actionsForDispatch = [{
-      type: resultAction.type,
-      data: resultAction.data,
+      ...result,
       initialData: initialData
     }];
   }

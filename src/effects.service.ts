@@ -16,7 +16,7 @@ export class EffectsService {
             const proxyObject = this0.container.get(target.constructor);
             const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
             EffectsService.logger.debug(
-                '[$EffectsService] The effects callback \"' + propertyKey + '" for the action "' + actionType + '" is called'
+                `[$EffectsService] The effects callback "${propertyKey}" for the action "${actionType}" is called`
             );
 
             return effectsFn.apply(

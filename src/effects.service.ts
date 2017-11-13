@@ -1,19 +1,24 @@
 import { Store } from 'redux';
 import { Container } from 'inversify';
+import { ILogger, LoggerFactory } from 'ts-smart-logger';
 
 export class EffectsService {
 
-  public static effects(actionType: string): (...arfs) => void {
+  public static effects(actionType: string): (...args) => void {
     const this0 = this;
     return (target: any, propertyKey: string): void => {
       if (this.fromEffectsMap(actionType)) {
-        throw new Error(`There is already exist an effect for the action type ${actionType}`);
+        EffectsService.logger.warn(`An effect already exists for the action type ${actionType}. Will be overridden.`);
       }
       this.effectsMap.set(
           actionType,
           function(): any {
             const proxyObject = this0.container.get(target.constructor);
-            const effectsFn: (...arfs) => {} = Reflect.get(proxyObject, propertyKey);
+            const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
+            EffectsService.logger.debug(
+                `The effects callback ${effectsFn.name} for the action ${actionType} is called with the arguments ${arguments}.`
+            );
+
             return effectsFn.apply(
                 proxyObject,
                 Array.from(arguments).concat(this0.store.getState())
@@ -23,7 +28,7 @@ export class EffectsService {
     };
   }
 
-  public static fromEffectsMap(type: string): (...arfs) => {} {
+  public static fromEffectsMap(type: string): (...args) => {} {
     return this.effectsMap.get(type);
   }
 
@@ -32,7 +37,8 @@ export class EffectsService {
     this.store = store;
   }
 
+  private static logger: ILogger = LoggerFactory.makeLogger(EffectsService);
   private static container: Container;
   private static store: Store<any>;
-  private static effectsMap = new Map<string, (...arfs) => {}>();
+  private static effectsMap = new Map<string, (...args) => {}>();
 }

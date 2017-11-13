@@ -8,7 +8,7 @@ export class EffectsService {
     const this0 = this;
     return (target: any, propertyKey: string): void => {
       if (this.fromEffectsMap(actionType)) {
-        EffectsService.logger.warn(`An effect already exists for the action type ${actionType}. Will be overridden.`);
+        EffectsService.logger.warn(`[$EffectsService] An effect already exists for the action type ${actionType}. Will be overridden.`);
       }
       this.effectsMap.set(
           actionType,
@@ -16,7 +16,7 @@ export class EffectsService {
             const proxyObject = this0.container.get(target.constructor);
             const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
             EffectsService.logger.debug(
-                `The effects callback ${effectsFn.name} for the action ${actionType} is called with the arguments ${arguments}.`
+                '[$EffectsService] The effects callback \"' + propertyKey + '" for the action "' + actionType + '" is called'
             );
 
             return effectsFn.apply(

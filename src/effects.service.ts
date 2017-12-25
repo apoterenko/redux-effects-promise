@@ -4,9 +4,12 @@ import { ILogger, LoggerFactory } from 'ts-smart-logger';
 
 export class EffectsService {
 
-  public static effects(actionType: string): (...args) => void {
+  public static effects(actionType?: string): (...args) => void {
     const this0 = this;
     return (target: any, propertyKey: string): void => {
+      if (!actionType) {
+        return;
+      }
       if (this.fromEffectsMap(actionType)) {
         EffectsService.logger.warn(`[$EffectsService] An effect already exists for the action type ${actionType}. Will be overridden.`);
       }

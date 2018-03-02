@@ -2,6 +2,7 @@ import { AnyAction } from 'redux';
 
 import { EffectsService } from './effects.service';
 import { EffectsAction } from './effects.action';
+import { EffectsActionBuilder } from './effects-action.builder';
 
 const toActions = (action: AnyAction, result: any): AnyAction[] => {
   const initialData = action.data;
@@ -27,7 +28,7 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
   }
   actionsForDispatch = actionsForDispatch || [
     {
-      type: `${action.type}.done`,
+      type: EffectsActionBuilder.buildDoneActionType(action.type),
       data: result,
       initialData,
     }
@@ -49,7 +50,7 @@ export const effectsMiddleware = ({dispatch}) => (
                 (result) => toActions(action, result).forEach((action0) => dispatch(
                     {...action0, initialData}
                 )),
-                (error) => dispatch({type: `${action.type}.error`, error, initialData})
+                (error) => dispatch({type: EffectsActionBuilder.buildErrorActionType(action.type), error, initialData})
             ),
           } as any);
         } else if (proxyFnResult) {

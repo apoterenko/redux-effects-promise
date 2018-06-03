@@ -4,13 +4,20 @@ import { ILogger, LoggerFactory } from 'ts-smart-logger';
 
 export class EffectsService {
 
-  public static effects(actionType?: string): (...args) => void {
+  public static effects(actionType?: string, protectFromOverride = false): (...args) => void {
     const this0 = this;
     return (target: any, propertyKey: string): void => {
       if (!actionType) {
         return;
       }
+      if (protectFromOverride) {
+        EffectsService.protectedSections.add(actionType);
+      }
       if (this.fromEffectsMap(actionType)) {
+        if (EffectsService.protectedSections.has(actionType)) {
+          EffectsService.logger.warn(`[$EffectsService] An effect does already exists and is protected for the action type ${actionType}.`);
+          return;
+        }
         EffectsService.logger.warn(`[$EffectsService] An effect already exists for the action type ${actionType}. Will be overridden.`);
       }
       this.effectsMap.set(
@@ -44,4 +51,5 @@ export class EffectsService {
   private static container: Container;
   private static store: Store<any>;
   private static effectsMap = new Map<string, (...args) => {}>();
+  private static protectedSections = new Set<string>();
 }

@@ -37,7 +37,7 @@ export class EffectsService {
                 Array.from(arguments).concat(this0.store.getState())
               );
             } catch (e) {
-              EffectsService.logger.debug(`[$EffectsService] The error: {}`, e);
+              EffectsService.logger.debug(`[$EffectsService] The error:`, e);
               return {type: '$$-REP-unhandled.error', error: e};
             }
           }

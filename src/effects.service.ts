@@ -29,10 +29,15 @@ export class EffectsService {
                 `[$EffectsService] The effects callback "${propertyKey}" for the action "${actionType}" is called`
             );
 
-            return effectsFn.apply(
+            try {
+              return effectsFn.apply(
                 proxyObject,
                 Array.from(arguments).concat(this0.store.getState())
-            );
+              );
+            } catch (e) {
+              EffectsService.logger.debug(`[$EffectsService] The error: {}`, e);
+              return {type: '$$-REP-unhandled.error', error: e};
+            }
           }
       );
     };

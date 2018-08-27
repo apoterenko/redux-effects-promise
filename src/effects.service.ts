@@ -2,6 +2,8 @@ import { Store } from 'redux';
 import { Container } from 'inversify';
 import { ILogger, LoggerFactory } from 'ts-smart-logger';
 
+import { IEffectsAction } from './effects.interface';
+
 export class EffectsService {
 
   public static effects(actionType?: string, protectFromOverride = false): (...args) => void {
@@ -22,7 +24,7 @@ export class EffectsService {
       }
       this.effectsMap.set(
           actionType,
-          function(): any {
+          function(): IEffectsAction | IEffectsAction[] | Promise<IEffectsAction | IEffectsAction[]> {
             const proxyObject = this0.container.get(target.constructor);
             const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
             EffectsService.logger.debug(

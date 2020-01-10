@@ -49,7 +49,7 @@ const toActions = (action: IEffectsAction, result): IEffectsAction[] => {
  * @returns {(next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => (IEffectsAction | undefined)}
  */
 export const effectsMiddleware = <TState>(payload: MiddlewareAPI<TState>) => (
-  (next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => {
+  (next: <TAction extends IEffectsAction>(action: TAction) => TAction) => <TAction extends IEffectsAction>(initialAction: TAction) => {
     const {dispatch} = payload as IEffectsMiddlewareAPI;
     const nextActionResult = next(initialAction);
     const proxy = EffectsService.fromEffectsMap(initialAction.type);

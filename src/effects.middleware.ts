@@ -3,7 +3,10 @@ import { AnyAction } from 'redux';
 import { EffectsAction } from './effects.action';
 import { EffectsActionBuilder } from './effects-action.builder';
 import { EffectsService } from './effects.service';
-import { IEffectsAction } from './effects.interface';
+import {
+  IEffectsAction,
+  IEffectsMiddlewareAPI,
+} from './effects.interface';
 import {
   isDefined,
   isFn,
@@ -44,11 +47,12 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
 
 /**
  * @stable [10.01.2020]
- * @param {any} dispatch
+ * @param {IEffectsMiddlewareAPI} payload
  * @returns {(next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => (IEffectsAction | undefined)}
  */
-export const effectsMiddleware = ({dispatch}) => (
+export const effectsMiddleware = (payload: IEffectsMiddlewareAPI) => (
   (next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => {
+    const {dispatch} = payload;
     const nextActionResult = next(initialAction);
     const proxy = EffectsService.fromEffectsMap(initialAction.type);
 
@@ -64,10 +68,10 @@ export const effectsMiddleware = ({dispatch}) => (
       return;
     }
 
-    const dispatchCallback = ($nextAction) => dispatch({...$nextAction, initialData});
+    const dispatchCallback = ($nextAction: IEffectsAction) => dispatch({...$nextAction, initialData});
     if (isPromiseLike(proxyResult)) {
       // Bluebird Promise supporting
-      // Stop chaining. An effect does return promise object (!)
+      // An effect does return a promise object - we should build the async chain (!)
 
       (proxyResult as Promise<{}>)
         .then(

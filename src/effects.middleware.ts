@@ -1,3 +1,5 @@
+import { MiddlewareAPI } from 'redux';
+
 import { EffectsAction } from './effects.action';
 import { EffectsActionBuilder } from './effects-action.builder';
 import { EffectsService } from './effects.service';
@@ -43,12 +45,12 @@ const toActions = (action: IEffectsAction, result): IEffectsAction[] => {
 
 /**
  * @stable [10.01.2020]
- * @param {IEffectsMiddlewareAPI} payload
+ * @param {MiddlewareAPI<TState>} payload
  * @returns {(next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => (IEffectsAction | undefined)}
  */
-export const effectsMiddleware = (payload: IEffectsMiddlewareAPI) => (
+export const effectsMiddleware = <TState>(payload: MiddlewareAPI<TState>) => (
   (next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => {
-    const {dispatch} = payload;
+    const {dispatch} = payload as IEffectsMiddlewareAPI;
     const nextActionResult = next(initialAction);
     const proxy = EffectsService.fromEffectsMap(initialAction.type);
 

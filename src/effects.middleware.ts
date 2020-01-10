@@ -11,7 +11,7 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
   if (Array.isArray(result)) {
     if (result.length) {
       const thisIsArrayOfActionEffects =
-          !!(result as any[]).find((item) => item instanceof EffectsAction);
+        !!(result as any[]).find((item) => item instanceof EffectsAction);
 
       if (thisIsArrayOfActionEffects) {
         actionsForDispatch = result.map((resultAction) => ({
@@ -37,29 +37,29 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
 };
 
 export const effectsMiddleware = ({dispatch}) => (
-    (next: <A extends AnyAction>(action: A) => A) => <A extends AnyAction>(action: A) => {
-      const proxyFn = EffectsService.fromEffectsMap(action.type);
-      if (proxyFn) {
-        const proxyFnResult = proxyFn(action);
-        const initialData = action.data;
+  (next: <A extends AnyAction>(action: A) => A) => <A extends AnyAction>(action: A) => {
+    const proxyFn = EffectsService.fromEffectsMap(action.type);
+    if (proxyFn) {
+      const proxyFnResult = proxyFn(action);
+      const initialData = action.data;
 
-        if (proxyFnResult instanceof Promise) {
-          return next({
-            ...action || {},
-            promise: proxyFnResult.then(
-                (result) => toActions(action, result).forEach((action0) => dispatch(
-                    {...action0, initialData}
-                )),
-                (error) => dispatch({type: EffectsActionBuilder.buildErrorActionType(action.type), error, initialData})
-            ),
-          } as any);
-        } else if (proxyFnResult) {
-          const nextActionResult = next(action);
-          toActions(action, proxyFnResult).forEach((action0) => dispatch(
+      if (proxyFnResult instanceof Promise) {
+        return next({
+          ...action || {},
+          promise: proxyFnResult.then(
+            (result) => toActions(action, result).forEach((action0) => dispatch(
               {...action0, initialData}
-          ));
-          return nextActionResult;
-        }
+            )),
+            (error) => dispatch({type: EffectsActionBuilder.buildErrorActionType(action.type), error, initialData})
+          ),
+        } as any);
+      } else if (proxyFnResult) {
+        const nextActionResult = next(action);
+        toActions(action, proxyFnResult).forEach((action0) => dispatch(
+          {...action0, initialData}
+        ));
+        return nextActionResult;
       }
-      return next(action);
-    });
+    }
+    return next(action);
+  });

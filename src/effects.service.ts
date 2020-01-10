@@ -6,41 +6,38 @@ import { IEffectsAction } from './effects.interface';
 
 export class EffectsService {
 
-  public static effects(actionType?: string, protectFromOverride = false): (...args) => void {
+  public static effects(actionType?: string, protect = false): (...args) => void {
     const this0 = this;
-    return (target: any, propertyKey: string): void => {
+    return (target: { new(...args): void }, propertyKey: string): void => {
       if (!actionType) {
         return;
       }
-      if (protectFromOverride) {
+      if (protect) {
         EffectsService.protectedSections.add(actionType);
       }
       if (this.fromEffectsMap(actionType)) {
         if (EffectsService.protectedSections.has(actionType)) {
-          EffectsService.logger.warn(`[$EffectsService] An effect does already exists and is protected for the action type ${actionType}.`);
+          EffectsService.logger.warn(`[$EffectsService] An effect does already exist and it is protected for the action type ${actionType}.`);
           return;
         }
-        EffectsService.logger.warn(`[$EffectsService] An effect already exists for the action type ${actionType}. Will be overridden.`);
+        EffectsService.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Will be overridden.`);
       }
       this.effectsMap.set(
-          actionType,
-          function(): IEffectsAction | IEffectsAction[] | Promise<IEffectsAction | IEffectsAction[]> {
-            const proxyObject = this0.container.get(target.constructor);
-            const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
-            EffectsService.logger.debug(
-                `[$EffectsService] The effects callback "${propertyKey}" for the action "${actionType}" is called`
-            );
+        actionType,
+        function(): IEffectsAction | IEffectsAction[] | Promise<IEffectsAction | IEffectsAction[]> {
+          const proxyObject = this0.container.get(target.constructor);
+          const effectsFn: (...args) => {} = Reflect.get(proxyObject, propertyKey);
 
-            try {
-              return effectsFn.apply(
-                proxyObject,
-                Array.from(arguments).concat(this0.store.getState())
-              );
-            } catch (e) {
-              EffectsService.logger.debug(`[$EffectsService] The error:`, e);
-              return {type: '$$-REP-unhandled.error', error: e};
-            }
+          try {
+            return effectsFn.apply(
+              proxyObject,
+              Array.from(arguments).concat(this0.store.getState())
+            );
+          } catch (e) {
+            EffectsService.logger.debug(`[$EffectsService] The error:`, e);
+            return {type: '$$-REP-unhandled.error', error: e};
           }
+        }
       );
     };
   }

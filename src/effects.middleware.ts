@@ -1,5 +1,3 @@
-import { AnyAction } from 'redux';
-
 import { EffectsAction } from './effects.action';
 import { EffectsActionBuilder } from './effects-action.builder';
 import { EffectsService } from './effects.service';
@@ -13,36 +11,34 @@ import {
   isPromiseLike,
 } from './effects.utils';
 
-const toActions = (action: AnyAction, result: any): AnyAction[] => {
+/**
+ * @stable [10.01.2020]
+ * @param {IEffectsAction} action
+ * @param result
+ * @returns {IEffectsAction[]}
+ */
+const toActions = (action: IEffectsAction, result): IEffectsAction[] => {
   const initialData = action.data;
-  let actionsForDispatch: AnyAction[];
+  let chainedActions: IEffectsAction[];
 
   if (Array.isArray(result)) {
-    if (result.length) {
-      const thisIsArrayOfActionEffects =
-        !!(result as any[]).find((item) => item instanceof EffectsAction);
+    chainedActions = result
+      .filter((resultItem) => resultItem instanceof EffectsAction)
+      .map((resultAction: IEffectsAction): IEffectsAction => ({...resultAction, initialData}));
 
-      if (thisIsArrayOfActionEffects) {
-        actionsForDispatch = result.map((resultAction) => ({
-          ...resultAction,
-          initialData,
-        }));
-      }
-    }
+    return chainedActions.length > 0 ? chainedActions : [];
   } else if (result instanceof EffectsAction) {
-    actionsForDispatch = [{
-      ...result,
-      initialData,
-    }];
+    // Return chained action
+    return [{...result, initialData}];
   }
-  actionsForDispatch = actionsForDispatch || [
+  return [
+    // Default result done action
     {
       type: EffectsActionBuilder.buildDoneActionType(action.type),
       data: result,
       initialData,
     }
   ];
-  return actionsForDispatch;
 };
 
 /**

@@ -28,9 +28,12 @@ const toActions = (action: IEffectsAction, result): IEffectsAction[] => {
       .filter((resultItem) => resultItem instanceof EffectsAction)
       .map((resultAction: IEffectsAction): IEffectsAction => ({...resultAction, initialData}));
 
-    return chainedActions.length > 0 ? chainedActions : [];
+    if (chainedActions.length > 0) {
+      // Return chained effects actions
+      return chainedActions;
+    }
   } else if (result instanceof EffectsAction) {
-    // Return chained action
+    // Return chained effects action
     return [{...result, initialData}];
   }
   return [

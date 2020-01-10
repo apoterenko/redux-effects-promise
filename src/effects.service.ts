@@ -57,6 +57,12 @@ export class EffectsService {
   private static readonly protectedSections = new Set<string>();
   private static store: Store<{}>;
 
+  /**
+   * @stable [10.01.2020]
+   * @param {string} actionType
+   * @param {string} propertyKey
+   * @param {{new(...args): void}} target
+   */
   private static addEffect(actionType: string, propertyKey: string, target: { new(...args): void }): void {
     this.effectsMap.set(
       actionType,

@@ -1,8 +1,14 @@
 import { AnyAction } from 'redux';
 
-import { EffectsService } from './effects.service';
 import { EffectsAction } from './effects.action';
 import { EffectsActionBuilder } from './effects-action.builder';
+import { EffectsService } from './effects.service';
+import { IEffectsAction } from './effects.interface';
+import {
+  isDefined,
+  isFn,
+  isPromiseLike,
+} from './effects.utils';
 
 const toActions = (action: AnyAction, result: any): AnyAction[] => {
   const initialData = action.data;
@@ -36,30 +42,40 @@ const toActions = (action: AnyAction, result: any): AnyAction[] => {
   return actionsForDispatch;
 };
 
+/**
+ * @stable [10.01.2020]
+ * @param {any} dispatch
+ * @returns {(next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => (IEffectsAction | undefined)}
+ */
 export const effectsMiddleware = ({dispatch}) => (
-  (next: <A extends AnyAction>(action: A) => A) => <A extends AnyAction>(action: A) => {
-    const proxyFn = EffectsService.fromEffectsMap(action.type);
-    if (proxyFn) {
-      const proxyFnResult = proxyFn(action);
-      const initialData = action.data;
+  (next: (action: IEffectsAction) => IEffectsAction) => (initialAction: IEffectsAction) => {
+    const nextActionResult = next(initialAction);
+    const proxy = EffectsService.fromEffectsMap(initialAction.type);
 
-      if (proxyFnResult instanceof Promise) {
-        return next({
-          ...action || {},
-          promise: proxyFnResult.then(
-            (result) => toActions(action, result).forEach((action0) => dispatch(
-              {...action0, initialData}
-            )),
-            (error) => dispatch({type: EffectsActionBuilder.buildErrorActionType(action.type), error, initialData})
-          ),
-        } as any);
-      } else if (proxyFnResult) {
-        const nextActionResult = next(action);
-        toActions(action, proxyFnResult).forEach((action0) => dispatch(
-          {...action0, initialData}
-        ));
-        return nextActionResult;
-      }
+    if (!isFn(proxy)) {
+      // Native redux behavior (!)
+      return nextActionResult;
     }
-    return next(action);
+
+    const initialData = initialAction.data;
+    const proxyResult = proxy(initialAction);
+    if (!isDefined(proxyResult)) {
+      // Stop chaining. An effect does return nothing (!)
+      return;
+    }
+
+    const dispatchCallback = ($nextAction) => dispatch({...$nextAction, initialData});
+    if (isPromiseLike(proxyResult)) {
+      // Bluebird Promise supporting
+      // Stop chaining. An effect does return promise object (!)
+
+      (proxyResult as Promise<{}>)
+        .then(
+          (result) => toActions(initialAction, result).forEach(dispatchCallback),
+          (error) => dispatch({type: EffectsActionBuilder.buildErrorActionType(initialAction.type), error, initialData})
+        );
+    } else {
+      toActions(initialAction, proxyResult).forEach(dispatchCallback);
+    }
+    return nextActionResult;
   });

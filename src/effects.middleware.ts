@@ -54,12 +54,11 @@ const toActions = (action: IEffectsAction, result): IEffectsAction[] => {
 export const effectsMiddleware = <TState>(payload: MiddlewareAPI<TState>) => (
   (next: <TAction extends IEffectsAction>(action: TAction) => TAction) => <TAction extends IEffectsAction>(initialAction: TAction) => {
     const {dispatch} = payload as IEffectsMiddlewareAPI;
-    const nextActionResult = next(initialAction);
     const proxy = EffectsService.fromEffectsMap(initialAction.type);
 
     if (!isFn(proxy)) {
       // Native redux behavior (!)
-      return nextActionResult;
+      return next(initialAction);
     }
 
     const initialData = initialAction.data;
@@ -69,6 +68,7 @@ export const effectsMiddleware = <TState>(payload: MiddlewareAPI<TState>) => (
       return;
     }
 
+    const nextActionResult = next(initialAction);
     const dispatchCallback = ($nextAction: IEffectsAction) => dispatch({...$nextAction, initialData});
     if (isPromiseLike(proxyResult)) {
       // Bluebird Promise supporting

@@ -65,7 +65,7 @@ export const effectsMiddleware = <TState>(payload: MiddlewareAPI<TState>) => (
     const proxyResult = proxy(initialAction);
     if (!isDefined(proxyResult)) {
       // Stop chaining. An effect does return nothing (!)
-      return;
+      return next(initialAction);
     }
 
     const nextActionResult = next(initialAction);

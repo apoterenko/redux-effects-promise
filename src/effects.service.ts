@@ -10,22 +10,20 @@ import { IEffectsAction } from './effects.interface';
 export class EffectsService {
 
   /**
-   * @stable [10.01.2020]
+   * @stable [15.03.2020]
    * @param {string} actionType
-   * @param {boolean} protect
+   * @param {boolean} override
    * @returns {(...args) => void}
    */
-  public static effects(actionType: string, protect = false): (...args) => void {
+  public static effects(actionType: string, override = false): (...args) => void {
     return (target: { new(...args): void }, propertyKey: string): void => {
-      if (protect) {
-        this.protectedSections.add(actionType);
-      }
       if (this.effectsMap.has(actionType)) {
-        if (this.protectedSections.has(actionType)) {
-          this.logger.warn(`[$EffectsService] An effect does already exist and it is protected for the action type ${actionType}.`);
+        if (override) {
+          this.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Will be overridden..`);
+        } else {
+          this.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Exit...`);
           return;
         }
-        this.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Will be overridden.`);
       }
       this.addEffect(actionType, propertyKey, target);
     };
@@ -54,7 +52,6 @@ export class EffectsService {
   private static readonly effectsMap = new Map<string, (...args) => {}>();
   private static readonly ERROR_ACTION_TYPE = '$$-REP-unhandled.error';
   private static readonly logger = LoggerFactory.makeLogger(EffectsService);
-  private static readonly protectedSections = new Set<string>();
   private static store: Store<{}>;
 
   /**

@@ -19,7 +19,7 @@ export class EffectsService {
     return (target: { new(...args): void }, propertyKey: string): void => {
       if (this.effectsMap.has(actionType)) {
         if (override) {
-          this.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Will be overridden..`);
+          this.logger.debug(`[$EffectsService] An effect does already exist for the action type ${actionType}. Will be overridden..`);
         } else {
           this.logger.warn(`[$EffectsService] An effect does already exist for the action type ${actionType}. Exit...`);
           return;

@@ -1,17 +1,17 @@
 import { Action } from 'redux';
 
 /**
- * @stable [10.01.2020]
+ * @stable [23.01.2021]
  */
-export interface IEffectsAction
+export interface IEffectsAction<TData = unknown>
   extends Action {
-  data?: any;
-  error?: any;
-  initialData?: any;
+  data?: TData;
+  error?: unknown;
+  initialData?: unknown;
 }
 
 /**
- * @stable [10.01.2020]
+ * @stable [23.01.2021]
  */
 export interface IEffectsMiddlewareAPI {
   dispatch: (action: IEffectsAction) => IEffectsAction;

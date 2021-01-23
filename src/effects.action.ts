@@ -1,32 +1,32 @@
 import { IEffectsAction } from './effects.interface';
 
-export class EffectsAction implements IEffectsAction {
+export class EffectsAction<TData = unknown> implements IEffectsAction {
 
-  public static create(type: string, data?: any): EffectsAction {
+  public static create<TData = unknown>(type: string, data?: TData): EffectsAction {
     return new EffectsAction(type, data);
   }
 
-  public initialData?: any;
-  public data?: any;
-  public error?: any;
+  public initialData?: unknown;
+  public data?: TData;
+  public error?: unknown;
   public type: string;
 
-  constructor(type: string, data?: any) {
+  constructor(type: string, data?: TData) {
     this.type = type;
     this.data = data;
   }
 
-  public setData(data: any): EffectsAction {
+  public setData(data: TData): EffectsAction {
     this.data = data;
     return this;
   }
 
-  public setError(error: any): EffectsAction {
+  public setError(error: unknown): EffectsAction {
     this.error = error;
     return this;
   }
 
-  public setInitialData(initialData: any): EffectsAction {
+  public setInitialData(initialData: unknown): EffectsAction {
     this.initialData = initialData;
     return this;
   }
